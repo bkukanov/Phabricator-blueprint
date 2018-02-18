@@ -1,8 +1,10 @@
   "name": "${environmentName}",
-  "description": "My static website",
+  "description": "phabricator",
+  "version": "1.0.0",
+  "author": "Baktiiar",
   "containers": [ {
-      "hostname": "${webContainerName}",
-      "template": "apache",
+      "hostname": "phabricator",
+      "template": "debian",
       "peer-criteria": "HTTP-GROUP",
       "size": "${webContainerSize}",
       "port-mapping": [
