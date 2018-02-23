@@ -1,80 +1,66 @@
-  "name": "${environmentName}",
+{
+  "name": "${envName}",
   "description": "phabricator",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "Baktiiar",
-  "containers": [ {
+  "containers": [
+    {
       "hostname": "phabricator",
-      "template": "debian",
+      "template": "ubuntu16",
       "peer-criteria": "HTTP-GROUP",
-      "size": "${webContainerSize}",
+      "size": "${phabricatorContainerSize}",
       "port-mapping": [
         {
-          "protocol": "http",
-          "domain": "${domainName}",
-          "internal-port": "80",
+          "protocol": "HTTP",
+          "domain": "${domain}",
+          "internal-port": "8065",
           "external-port": "80"
-        },
-        {
-          "protocol": "tcp",
-          "domain": "${domainName}",
-          "internal-port": "22",
-          "external-port": "4040"
         }
       ]
     }
   ],
-  "peer-criteria": [ 
+  "peer-criteria": [
     {
       "name": "HTTP-GROUP",
-      "max-price": "5",
-      "avg-cpu-load": "50",
-      "min-free-ram": "128",
-      "min-free-disk-space": "10"
+      "max-price": "${maxPeersPrice}"
     }
   ],
-  "user-variables":
-  {
-    "environmentName": {
-      "description": "Enter the environment name",
-      "type": "string",
-      "default": "My-Website",
-      "validation": "[a-zA-Z0-9]+"
-    },
-    "domainName": {
-      "description": "Enter the application domain name",
-      "type": "string",
-      "default": "simpleblueprint-container",
-      "validation": "[a-zA-Z0-9]+"
-    },
-    "webContainerName": {
-      "description": "Enter the container's hostname",
-      "type": "string",
-      "default": "apache",
-      "validation": "[a-zA-Z0-9]+"
-    },
-    "webContainerSize": {
-      "description": "Set the container size to SMALL, MEDIUM, or LARGE",
-      "type": "enum",
-      "default": "SMALL",
-      "validation": "SMALL,MEDIUM,LARGE"
-    }
-  },
   "ansible-configuration": {
-    "source-url": "https://github.com/subutai-blueprints/example-website/archive/master.zip",
-    "ansible-playbook": "setup-site.yml",
-    "extra-vars": [
-      {
-        "key": "foo",
-        "value": "bar"  
-      }
-    ],
+    "source-url": "https://github.com/bkukanov/Phabricator-blueprint/archive/master.zip",
+    "ansible-playbook": "main.yml",
     "groups": [
       {
-        "name": "web-servers",
+        "name": "phabricator",
         "hostnames": [
-          "${webContainerName}"
+          "phabricator"
         ]
       }
     ]
+  },
+  "user-variables": {
+    "domain": {
+      "description": "Select your domain or create new one",
+      "type": "domain",
+      "default": "phabricator.envs.subutai.cloud",
+      "validation": "[a-zA-Z0-9.-]+"
+    },
+    "phabricatorContainerSize": {
+      "description": "You can set LARGE,HUGE",
+      "type": "enum",
+      "default": "SMALL",
+      "validation": "SMALL,LARGE,HUGE"
+    },
+    "maxPeersPrice": {
+      "description": "To search and find the best initial peers for you to select from, enter the maximum GoodWill / hour (GW/h) limit you might be willing to pay while running this application on rented peers? You can still select free peers, your peers, and others based on price before installing the application.",
+      "type": "int",
+      "default": "50",
+      "validation": "\\d+"
+    },
+    "envName": {
+      "description": "Enter your environment name",
+      "type": "string",
+      "default": "phabricator env",
+      "validation": "[a-zA-Z0-9]+"
+    }
   }
 }
